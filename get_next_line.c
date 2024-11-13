@@ -6,70 +6,104 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 20:39:00 by imunaev-          #+#    #+#             */
-/*   Updated: 2024/11/13 13:27:50 by imunaev-         ###   ########.fr       */
+/*   Updated: 2024/11/13 23:59:11 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// ssize_t read(int fildes, void *buf, size_t nbyte);
-// If the value of nbyte is greater than {SSIZE_MAX}, the result is implementation-defined.
+#include "get_next_line.h"
 
 /*
-** get_next_line() reads the text file pointed to by the f one line at a time.
-**
-** fd: ile descriptor.
-** Return: One line that was read, one line at a time,
-** NULL if there is nothing else to read, or an error occurred.
+** Reads a line from the file descriptor 'fd' and returns it.
+** Returns NULL if there is nothing else to read or an error occurs.
 */
-
-#include "get_next_line.h"
 
 char	*get_next_line(int fd)
 {
-    static char	*main_buf;  // Static buffer for leftover data
-    char	    *temp_buf;  // Temporary buffer for reading in chunks
-    char	    *line;
-    ssize_t     bytes_read;
+	static char	*remainder;
+	char		*line;
+	char		*buffer;
+	ssize_t		bytes_read;
 
-    main_buf = NULL;
-    if (fd < 0 || BUFFER_SIZE <= 0) // Validate file descriptor and BUFFER_SIZE
-        return (NULL);
-    if (line = check_main_buf(main_buf))
-        return (line);
-    temp_buf = malloc(BUFFER_SIZE + 1); // Allocate memory for the temporary buffer
-    if (!temp_buf)
-        return (NULL);
-    while (get_data(fd, temp_buf, BUFFER_SIZE)) > 0) // Read data from the file descriptor
-    {
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	buffer = (char *)malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (NULL);
+	bytes_read = 1;
+	while (!ft_strchr(remainder, '\n') && bytes_read != 0)
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read == -1)
+		{
+			free(buffer);
+			free(remainder);
+			remainder = NULL;
+			return (NULL);
+		}
+		buffer[bytes_read] = '\0';
+		remainder = ft_strjoin_and_free(remainder, buffer);
+		if (!remainder)
+		{
+			free(buffer);
+			return (NULL);
+		}
+	}
+	free(buffer);
+	line = extract_line(remainder);
+	remainder = update_remainder(remainder);
+	return (line);
+}
 
-        temp_buf[bytes_read] = '\0'; // Null-terminate the buffer
-        main_buf = ft_strjoin_and_free(main_buf, temp_buf); // Append temp_buf to main_buf
-        if (!main_buf)
-        {
-            free(temp_buf);
-            return (NULL);
-        }
-        if ((line = get_line(main_buf))) // Check if a complete line can be extracted
-        {
-            main_buf = update_main_buf(main_buf); // Update main_buf to hold any leftover data
-            free(temp_buf);
-            return (line);
-        }
-    }
-    free(temp_buf);
-    if (get_data == -1) // Handle read error
-    {
-        free(main_buf);
-        main_buf = NULL;
-        return (NULL);
-    }
-    if (main_buf && *main_buf != '\0') // If there's leftover data without a newline
-    {
-        line = ft_strdup(main_buf);
-        free(main_buf);
-        main_buf = NULL;
-        return (line);
-    }
-    free(main_buf); // No more data to read; clean up and return NULL
-    main_buf = NULL;
-    return (NULL);
+/*
+** Extracts the line from 'remainder' up to and including the newline character.
+** Returns the extracted line.
+*/
+char	*extract_line(char *remainder)
+{
+	size_t	i;
+	char	*line;
+
+	if (!remainder || *remainder == '\0')
+		return (NULL);
+	i = 0;
+	while (remainder[i] && remainder[i] != '\n')
+		i++;
+	if (remainder[i] == '\n')
+		i++;
+	line = (char *)malloc(i + 1);
+	if (!line)
+		return (NULL);
+	ft_strncpy(line, remainder, i);
+	line[i] = '\0';
+	return (line);
+}
+
+/*
+** Updates 'remainder' by removing the extracted line.
+** Returns the updated 'remainder'.
+*/
+char	*update_remainder(char *remainder)
+{
+	size_t	i;
+	size_t	len;
+	char	*new_remainder;
+
+	i = 0;
+	while (remainder[i] && remainder[i] != '\n')
+		i++;
+	if (remainder[i] == '\0')
+	{
+		free(remainder);
+		return (NULL);
+	}
+	len = ft_strlen(remainder);
+	new_remainder = (char *)malloc(len - i + 1);
+	if (!new_remainder)
+	{
+		free(remainder);
+		return (NULL);
+	}
+	ft_strcpy(new_remainder, remainder + i + 1);
+	free(remainder);
+	return (new_remainder);
 }

@@ -1,0 +1,59 @@
+
+---------- ERROR MANAGMENT ----------
+
+Carry out AT LEAST the following tests to try to stress the error
+management.
+
+Pass an arbitrary file descriptor to the get_next_line function
+on which it is not possible to read, for example 42. The function must return NULL.
+
+Check the error returns for read and malloc.
+If there is an error, the evaluation stops here.
+You can keep going and discuss the implementation of the code, but the assignment will not be graded.
+
+
+---------- TESTING ----------
+
+As the evaluator, you are expected to provide a main which will always check:
+
+The return value of the get_next_line is NULL in case of error.
+Otherwise, the function returns the line read, always with a \n at the end except
+if the end of file was reached and does not end with a \n character.
+
+Test all the possible combinations of the following rules:
+
+Large BUFFER_SIZE (>1024)
+Small BUFFER_SIZE (< 8, and 1)
+BUFFER_SIZE exactly the length of the line to read
+1 byte variant (+/-) between the line and the BUFFER_SIZE
+
+Read on stdin
+
+Read from a file
+
+(Multiple/Single) Long line (2k+ characters)
+
+(Multiple/Single) Short line (< 4 characters, even 1)
+
+(Multiple/Single) Empty line
+
+These tests should enable you to verify the strength of the student's
+get_next_line.
+If there is an error, the evaluation stops here.
+
+
+---------- BOUNUS PART ----------
+
+Multiple fd reading
+
+Perform the same tests as you did before, this time launch multiple
+instances of get_next_line with a different file descriptor on each. Make
+sure that each get_next_line is returning the correct line. Combine with
+a non-existing fd to check for errors.
+
+
+Single static variable
+
+Check the code and verify if there is indeed only one static variable.
+Give the points if that's the case.
+

@@ -1,20 +1,33 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/13 09:52:15 by imunaev-          #+#    #+#             */
+/*   Updated: 2024/11/14 00:00:38 by imunaev-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GET_NEXT_LINE_H
-#define GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-#include <unistd.h> // for read()
-#include <stdlib.h> // for malloc(), free()
+# include <stdlib.h>  // For malloc, free
+# include <unistd.h>  // For read
 
-// Set default BUFFER_SIZE
-#ifndef BUFFER_SIZE
-    #define BUFFER_SIZE 4096
-#elif BUFFER_SIZE != 4096
-    #undef BUFFER_SIZE
-    #define BUFFER_SIZE 4096
-#endif
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
-#define MAIN_BUF_SIZE 8192
-
-// Function prototype
 char	*get_next_line(int fd);
+char	*extract_line(char *remainder);
+char	*update_remainder(char *remainder);
 
-#endif /* GET_NEXT_LINE_H */
+size_t	ft_strlen(const char *s);
+char	*ft_strchr(const char *s, int c);
+char	*ft_strjoin_and_free(char *s1, char *s2);
+void	ft_strncpy(char *dest, const char *src, size_t n);
+void	ft_strcpy(char *dest, const char *src);
+
+#endif

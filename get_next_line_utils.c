@@ -1,68 +1,106 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/13 09:52:22 by imunaev-          #+#    #+#             */
+/*   Updated: 2024/11/13 23:59:57 by imunaev-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 /*
-** init_buffer() allocates memory for the buffer.
-**
-** buffer_zize: default buffer size, or size provided with -D BUFFER_SIZE=n
-** Return: ptr to the memory allocated
+** Returns the length of the string 's'.
 */
-
-int	len_line(char *line)
+size_t	ft_strlen(const char *s)
 {
-	int len_line;
+	size_t	len;
 
-	len_line = 0;
-	while(line++)
-		len_line ++;
-	return (len_line);
+	len = 0;
+	while (s && s[len])
+		len++;
+	return (len);
 }
-void	*allocate_memory(size_t num_bytes)
-{
-	void	*space;
 
-	space = (void *)malloc(size_of (num_bytes));
-	if (!space)
+/*
+** Searches for the character 'c' in the string 's'.
+** Returns a pointer to the first occurrence of 'c', or NULL if not found.
+*/
+char	*ft_strchr(const char *s, int c)
+{
+	size_t	i;
+
+	i = 0;
+	if (!s)
 		return (NULL);
-	return (space);
+	while (s[i])
+	{
+		if (s[i] == (char)c)
+			return ((char *)(s + i));
+		i++;
+	}
+	if ((char)c == '\0')
+		return ((char *)(s + i));
+	return (NULL);
 }
 
-char	get_line(char *buffer, int index)
+/*
+** Joins two strings 's1' and 's2' into a new string.
+** Frees 's1' after joining.
+** Returns the new string, or NULL if allocation fails.
+*/
+char	*ft_strjoin_and_free(char *s1, char *s2)
 {
-	unsigned char	*line;
-	size_t	len_line;
-	int	last_line;
+	size_t	len1;
+	size_t	len2;
+	char	*new_str;
 
-	len_line = 0;
-
-	// marker for the new line
-	last_line = 0;
-
-	// calculate the line lenth for memory allocation
-	while (buffer[index] != '/0' || index <= BUFFER_SIZE - 1)
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	new_str = (char *)malloc(len1 + len2 + 1);
+	if (!new_str)
 	{
-		len_line++;
-		index++;
+		free(s1);
+		return (NULL);
+	}
+	ft_strcpy(new_str, s1);
+	ft_strcpy(new_str + len1, s2);
+	free(s1);
+	return (new_str);
+}
 
-		// check do we reach the EOF
-		if (index == BUFFER_SIZE - 1 && index != '\0')
+/*
+** Copies 'n' characters from 'src' to 'dest'.
+** 'dest' must be large enough to hold the copied characters.
+*/
+void	ft_strncpy(char *dest, const char *src, size_t n)
+{
+	size_t	i;
 
-			// change marker TRUE
-			last_line = 1;
+	i = 0;
+	while (src && src[i] && i < n)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+}
 
-	// allocate memory for the line
-	line = allocate_memory(len_line + 1); // +1 for '\n' or '\0'
+/*
+** Copies the string 'src' to 'dest'.
+** Assumes 'dest' is large enough to hold 'src'.
+*/
+void	ft_strcpy(char *dest, const char *src)
+{
+	size_t	i;
 
-	// copy line from the buffer to the str 'line'
-	while (len_line > 0)
-		line[--len_line] = buffer[index--];
-
-	// if we found the last line, append EOF
-	if (last_line)
-		line[len_line] = '\0';
-	
-	// if NOT the last line, just append '\n'
-	else
-		line[len_line] = '\n';
-
-	return (line);
+	i = 0;
+	while (src && src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
 }
