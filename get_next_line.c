@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 20:39:00 by imunaev-          #+#    #+#             */
-/*   Updated: 2024/11/12 20:58:41 by imunaev-         ###   ########.fr       */
+/*   Updated: 2024/11/13 13:27:50 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,50 +23,53 @@
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-    unsigned static char	main_buf[MAIN_BUF_SIZE]; // Static buffer for leftover data
-    unsigned char	*temp_buf;                       // Temporary buffer for reading in chunks
-    int	data;                                        // "Loop marker" for read status
-    char	*line;
-	int	head;
-	int	tail;
+    static char	*main_buf;  // Static buffer for leftover data
+    char	    *temp_buf;  // Temporary buffer for reading in chunks
+    char	    *line;
+    ssize_t     bytes_read;
 
-	data = 1;
-	line = NULL;
-	head = 0;
-	tail = 0;
-
-	//
-
-
-    // Allocate temporary buffer
-    temp_buf = malloc(BUFFER_SIZE);
+    main_buf = NULL;
+    if (fd < 0 || BUFFER_SIZE <= 0) // Validate file descriptor and BUFFER_SIZE
+        return (NULL);
+    if (line = check_main_buf(main_buf))
+        return (line);
+    temp_buf = malloc(BUFFER_SIZE + 1); // Allocate memory for the temporary buffer
     if (!temp_buf)
         return (NULL);
-
-    // Retrieve data until read() returns 0 (EOF)
-    while (data)
+    while (get_data(fd, temp_buf, BUFFER_SIZE)) > 0) // Read data from the file descriptor
     {
-        // Process any complete lines already in MAIN_BUF
-        while ((line = get_line(main_buf, head, tail)) != NULL)
+
+        temp_buf[bytes_read] = '\0'; // Null-terminate the buffer
+        main_buf = ft_strjoin_and_free(main_buf, temp_buf); // Append temp_buf to main_buf
+        if (!main_buf)
         {
-            free(temp_buf); // Free temp buffer if line is found
-            return (line);  // Return the extracted line
+            free(temp_buf);
+            return (NULL);
         }
-
-        // Read from fd into TEMP_BUF, returns number of bytes read or 0 for EOF
-        data = read(fd, temp_buf, BUFFER_SIZE);
-
-        if (data > 0)
-            add_data(temp_buf, main_buf, head, tail); // Append TEMP_BUF contents to MAIN_BUF
-        else
-            return get_last_line(main_buf); // Return last line if no more data
+        if ((line = get_line(main_buf))) // Check if a complete line can be extracted
+        {
+            main_buf = update_main_buf(main_buf); // Update main_buf to hold any leftover data
+            free(temp_buf);
+            return (line);
+        }
     }
-
-    // Free allocated memory and clean up
     free(temp_buf);
-    clean_up(main_buf); // Reset or clear MAIN_BUF as needed
-
-    return NULL; // Return NULL to indicate EOF or no more data
+    if (get_data == -1) // Handle read error
+    {
+        free(main_buf);
+        main_buf = NULL;
+        return (NULL);
+    }
+    if (main_buf && *main_buf != '\0') // If there's leftover data without a newline
+    {
+        line = ft_strdup(main_buf);
+        free(main_buf);
+        main_buf = NULL;
+        return (line);
+    }
+    free(main_buf); // No more data to read; clean up and return NULL
+    main_buf = NULL;
+    return (NULL);
 }
