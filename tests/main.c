@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "../get_next_line.h" // Make sure this header file includes get_next_line declaration
+#include "../get_next_line.h"
 
 int main(int argc, char **argv)
 {
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
         fd = open(argv[1], O_RDONLY);
         if (fd == -1)
         {
-            perror("Error opening file");
+            printf("Error opening file");
             return (1);
         }
         printf("Reading from file: %s\n", argv[1]);

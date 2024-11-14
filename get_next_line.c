@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 20:39:00 by imunaev-          #+#    #+#             */
-/*   Updated: 2024/11/14 13:18:25 by imunaev-         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:55:00 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,38 +17,37 @@
 ** Returns NULL if there is nothing else to read or an error occurs.
 */
 
-char	*get_next_line(int fd)
+char	*read_until_newline(int fd, char **temp_buf)
 {
-	static char	*temp_buf;
-	char		*line;
-	char		*buffer;
-	ssize_t		bytes_read;
+	char	*buffer;
+	ssize_t	bytes_read;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
 	buffer = (char *)malloc(BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
 	bytes_read = 1;
-	while (!ft_strchr(temp_buf, '\n') && bytes_read != 0)
+	while (!ft_strchr(*temp_buf, '\n') && bytes_read != 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
-		{
-			free(buffer);
-			free(temp_buf);
-			temp_buf = NULL;
-			return (NULL);
-		}
+			return (free(buffer), free(*temp_buf), NULL);
 		buffer[bytes_read] = '\0';
-		temp_buf = ft_strjoin_and_free(temp_buf, buffer);
-		if (!temp_buf)
-		{
-			free(buffer);
-			return (NULL);
-		}
+		*temp_buf = ft_strjoin_and_free(*temp_buf, buffer);
+		if (!*temp_buf)
+			return (free(buffer), NULL);
 	}
-	free(buffer);
+	return (free(buffer), *temp_buf);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*temp_buf;
+	char		*line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (!read_until_newline(fd, &temp_buf))
+		return (NULL);
 	line = extract_line(temp_buf);
 	temp_buf = update_temp_buf(temp_buf);
 	return (line);
@@ -91,18 +90,11 @@ char	*update_temp_buf(char *temp_buf)
 	while (temp_buf[i] && temp_buf[i] != '\n')
 		i++;
 	if (temp_buf[i] == '\0')
-	{
-		free(temp_buf);
-		return (NULL);
-	}
+		return (free(temp_buf), NULL);
 	len = ft_strlen(temp_buf);
 	new_temp_buf = (char *)malloc(len - i + 1);
 	if (!new_temp_buf)
-	{
-		free(temp_buf);
-		return (NULL);
-	}
+		return (free(temp_buf), NULL);
 	ft_strcpy(new_temp_buf, temp_buf + i + 1);
-	free(temp_buf);
-	return (new_temp_buf);
+	return (free(temp_buf), new_temp_buf);
 }
