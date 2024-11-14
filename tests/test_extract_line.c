@@ -1,4 +1,10 @@
-#include "test_gnl.h"
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "../get_next_line.h"
 
 // Assuming extract_line and ft_strncpy are defined elsewhere
 
