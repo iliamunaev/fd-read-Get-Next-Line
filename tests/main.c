@@ -29,6 +29,7 @@ int main(int argc, char **argv)
             return (1);
         }
         printf("Reading from file: %s\n", argv[1]);
+		printf("----- Beginning of input -----\n");
     }
     else
     {
@@ -50,6 +51,6 @@ int main(int argc, char **argv)
         close(fd);
     }
 
-    printf("\nEnd of input.\n");
+    printf("----- End of input -----\n");
     return (0);
 }
