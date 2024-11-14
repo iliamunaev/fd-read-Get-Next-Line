@@ -35,6 +35,8 @@ int main(int argc, char **argv)
     {
         // No file specified, read from standard input (terminal)
         fd = 0; // Standard input
+        // fd not possible to read, uncomment for test
+        //fd = 42;
         printf("Reading from terminal. Enter text, press Ctrl+D to end:\n");
     }
 
