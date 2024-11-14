@@ -46,7 +46,7 @@ Adjust -D BUFFER_SIZE=**n** where '**n**' is the your buffer size'
 cc -Wall -Werror -Wextra -D BUFFER_SIZE=n ../get_next_line.c ../get_next_line_utils.c main.c -o main_test_my_buffer_size
 ```
 ## Test memory leaks
-
+Replace 'your_program' with the name of your program.
 ```
 valgrind --leak-check=yes ./your_program
 ```
