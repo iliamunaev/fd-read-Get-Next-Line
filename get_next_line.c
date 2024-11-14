@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 20:39:00 by imunaev-          #+#    #+#             */
-/*   Updated: 2024/11/13 23:59:11 by imunaev-         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:25:59 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ char	*extract_line(char *remainder)
 	if (!line)
 		return (NULL);
 	ft_strncpy(line, remainder, i);
-	line[i] = '\0';
 	return (line);
 }
 
