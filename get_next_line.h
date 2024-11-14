@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 09:52:15 by imunaev-          #+#    #+#             */
-/*   Updated: 2024/11/14 10:23:14 by imunaev-         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:18:39 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # endif
 
 char	*get_next_line(int fd);
-char	*extract_line(char *remainder);
-char	*update_remainder(char *remainder);
+char	*extract_line(char *temp_buf);
+char	*update_temp_buf(char *temp_buf);
 
 size_t	ft_strlen(const char *s);
 char	*ft_strchr(const char *s, int c);

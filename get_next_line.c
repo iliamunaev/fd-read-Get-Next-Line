@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 20:39:00 by imunaev-          #+#    #+#             */
-/*   Updated: 2024/11/14 10:25:59 by imunaev-         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:18:25 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*remainder;
+	static char	*temp_buf;
 	char		*line;
 	char		*buffer;
 	ssize_t		bytes_read;
@@ -30,79 +30,79 @@ char	*get_next_line(int fd)
 	if (!buffer)
 		return (NULL);
 	bytes_read = 1;
-	while (!ft_strchr(remainder, '\n') && bytes_read != 0)
+	while (!ft_strchr(temp_buf, '\n') && bytes_read != 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
 		{
 			free(buffer);
-			free(remainder);
-			remainder = NULL;
+			free(temp_buf);
+			temp_buf = NULL;
 			return (NULL);
 		}
 		buffer[bytes_read] = '\0';
-		remainder = ft_strjoin_and_free(remainder, buffer);
-		if (!remainder)
+		temp_buf = ft_strjoin_and_free(temp_buf, buffer);
+		if (!temp_buf)
 		{
 			free(buffer);
 			return (NULL);
 		}
 	}
 	free(buffer);
-	line = extract_line(remainder);
-	remainder = update_remainder(remainder);
+	line = extract_line(temp_buf);
+	temp_buf = update_temp_buf(temp_buf);
 	return (line);
 }
 
 /*
-** Extracts the line from 'remainder' up to and including the newline character.
+** Extracts the line from 'temp_buf' up to and including the newline character.
 ** Returns the extracted line.
 */
-char	*extract_line(char *remainder)
+char	*extract_line(char *temp_buf)
 {
 	size_t	i;
 	char	*line;
 
-	if (!remainder || *remainder == '\0')
+	if (!temp_buf || *temp_buf == '\0')
 		return (NULL);
 	i = 0;
-	while (remainder[i] && remainder[i] != '\n')
+	while (temp_buf[i] && temp_buf[i] != '\n')
 		i++;
-	if (remainder[i] == '\n')
+	if (temp_buf[i] == '\n')
 		i++;
 	line = (char *)malloc(i + 1);
 	if (!line)
 		return (NULL);
-	ft_strncpy(line, remainder, i);
+	ft_strncpy(line, temp_buf, i);
 	return (line);
 }
 
 /*
-** Updates 'remainder' by removing the extracted line.
-** Returns the updated 'remainder'.
+** Updates 'temp_buf' by removing the extracted line.
+** Returns the updated 'temp_buf'.
 */
-char	*update_remainder(char *remainder)
+char	*update_temp_buf(char *temp_buf)
 {
 	size_t	i;
 	size_t	len;
-	char	*new_remainder;
+	char	*new_temp_buf;
 
 	i = 0;
-	while (remainder[i] && remainder[i] != '\n')
+	while (temp_buf[i] && temp_buf[i] != '\n')
 		i++;
-	if (remainder[i] == '\0')
+	if (temp_buf[i] == '\0')
 	{
-		free(remainder);
+		free(temp_buf);
 		return (NULL);
 	}
-	len = ft_strlen(remainder);
-	new_remainder = (char *)malloc(len - i + 1);
-	if (!new_remainder)
+	len = ft_strlen(temp_buf);
+	new_temp_buf = (char *)malloc(len - i + 1);
+	if (!new_temp_buf)
 	{
-		free(remainder);
+		free(temp_buf);
 		return (NULL);
 	}
-	ft_strcpy(new_remainder, remainder + i + 1);
-	free(remainder);
-	return (new_remainder);
+	ft_strcpy(new_temp_buf, temp_buf + i + 1);
+	free(temp_buf);
+	return (new_temp_buf);
 }
