@@ -1,9 +1,5 @@
 // main.c
 
-#include <stdio.h>
-#include <fcntl.h>
-#include "../get_next_line.h"
-
 // multiple_empty_lines.txt
 // multiple_long_lines.txt
 // multiple_short_lines.txt
@@ -11,23 +7,49 @@
 // single_long_line.txt
 // single_short_line.txt
 
-int main(void)
-{
-	int fd;
-	char *line;
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include "../get_next_line.h" // Make sure this header file includes get_next_line declaration
 
-	// ------- REPLACE TEXT FILE HERE -------
-	fd = open("single_short_line.txt", O_RDONLY);
-	if (fd == -1)
-	{
-	perror("Error opening file");
-		return (1);
-	}
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", line);
-		free(line);
-	}
-	close(fd);
-	return (0);
+int main(int argc, char **argv)
+{
+    int fd;
+    char *line;
+
+    // Check if a filename is provided as an argument
+    if (argc == 2)
+    {
+        // Open the specified file
+        fd = open(argv[1], O_RDONLY);
+        if (fd == -1)
+        {
+            perror("Error opening file");
+            return (1);
+        }
+        printf("Reading from file: %s\n", argv[1]);
+    }
+    else
+    {
+        // No file specified, read from standard input (terminal)
+        fd = 0; // Standard input
+        printf("Reading from terminal. Enter text, press Ctrl+D to end:\n");
+    }
+
+    // Read and print each line
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        printf("%s", line);
+        free(line);
+    }
+
+    // Close the file if reading from a file
+    if (fd != 0)
+    {
+        close(fd);
+    }
+
+    printf("\nEnd of input.\n");
+    return (0);
 }

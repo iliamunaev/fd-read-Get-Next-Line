@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 09:52:22 by imunaev-          #+#    #+#             */
-/*   Updated: 2024/11/14 09:43:52 by imunaev-         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:16:20 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ void	ft_strncpy(char *dest, const char *src, size_t n)
 	{
 		dest[i] = src[i];
 		i++;
-
 	}
 	dest[i] = '\0';
 }
