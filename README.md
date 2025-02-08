@@ -14,7 +14,7 @@ This project implements a function, `get_next_line`, that reads a single line fr
 
 The default BUFFER_SIZE=42 and compiled with:
 ```
-cc -Wall -Werror -Wextra ../get_next_line.c ../get_next_line_utils.c main.c -o main_test
+cc -Wall -Werror -Wextra get_next_line.c get_next_line_utils.c tests/main.c -o gnl
 ```
 ### Test with different buffer sizes
 The tests cover:
@@ -43,11 +43,11 @@ Run
 Adjust -D BUFFER_SIZE=**n** where '**n**' is the your buffer size'
 
 ```
-cc -Wall -Werror -Wextra -D BUFFER_SIZE=n ../get_next_line.c ../get_next_line_utils.c main.c -o main_test_my_buffer_size
+cc -Wall -Werror -Wextra -D BUFFER_SIZE=n get_next_line.c get_next_line_utils.c tests/main.c -o gnl
 ```
 ## Test memory leaks
 Replace 'your_program' with the name of your program.
 ```
-valgrind --leak-check=yes ./your_program
+valgrind --leak-check=yes ./gnl
 ```
 
