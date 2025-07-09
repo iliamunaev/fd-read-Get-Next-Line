@@ -80,21 +80,18 @@ char	*extract_line(char *temp_buf)
 ** Updates 'temp_buf' by removing the extracted line.
 ** Returns the updated 'temp_buf'.
 */
-char	*update_temp_buf(char *temp_buf)
+char	*get_next_line(int fd)
 {
-	size_t	i;
-	size_t	len;
-	char	*new_temp_buf;
+	static char	*temp_buf;
+	char		*line;
 
-	i = 0;
-	while (temp_buf[i] && temp_buf[i] != '\n')
-		i++;
-	if (temp_buf[i] == '\0')
-		return (free(temp_buf), NULL);
-	len = ft_strlen(temp_buf);
-	new_temp_buf = (char *)malloc(len - i + 1);
-	if (!new_temp_buf)
-		return (free(temp_buf), NULL);
-	ft_strcpy(new_temp_buf, temp_buf + i + 1);
-	return (free(temp_buf), new_temp_buf);
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (!read_until_newline(fd, &temp_buf))
+		return (free(temp_buf), temp_buf = NULL, NULL);
+	line = extract_line(temp_buf);
+	if (!line)
+		return (free(temp_buf), temp_buf = NULL, NULL);
+	temp_buf = update_temp_buf(temp_buf);
+	return (line);
 }
